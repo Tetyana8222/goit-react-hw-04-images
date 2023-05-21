@@ -1,32 +1,31 @@
-import { GalleryItem, Thumb, Image } from './ImageGalleryItem.styled';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { GalleryItem, Thumb, Image } from './ImageGalleryItem.styled';
 
-import React, { Component } from 'react';
+import Modal from 'components/Modal/Modal';
 
-export default class ImageGalleryItem extends Component {
-  onImageClick = () => {
-    const { updateImglink, openModal, largeImageURL } = this.props;
-    updateImglink(largeImageURL);
-    openModal();
+export function ImageGalleryItem({ src, alt, largeImageURL }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleToggleModal = event => {
+    setIsModalOpen(prevState => !prevState);
   };
-  render() {
-    const { alt, src } = this.props;
-    return (
-      <GalleryItem>
-        <Thumb>
-          <Image
-            src={src}
-            alt={alt}
-            loading="lazy"
-            onClick={this.onImageClick}
-          />
-        </Thumb>
-      </GalleryItem>
-    );
-  }
+
+  return (
+    <GalleryItem>
+      <Thumb>
+        <Image src={src} alt={alt} loading="lazy" onClick={handleToggleModal} />
+      </Thumb>
+      {isModalOpen && (
+        <Modal img={largeImageURL} tags={alt} onClose={handleToggleModal} />
+      )}
+    </GalleryItem>
+  );
 }
+
+export default ImageGalleryItem;
+
 ImageGalleryItem.propTypes = {
-  updateImglink: PropTypes.func.isRequired,
-  openModal: PropTypes.func.isRequired,
+  src: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
   largeImageURL: PropTypes.string.isRequired,
 };

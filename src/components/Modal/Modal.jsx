@@ -1,56 +1,43 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import { ModalOverlay, ModalContainer, Img } from './Modal.styled';
 
 const modalRoot = document.querySelector('#modal-root');
 
-class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  handleKeyDown = event => {
+export function Modal({ onClose, tags, img }) {
+  /* eslint-disable */
+  const handleKeyDown = event => {
     if (event.code === 'Escape') {
-      this.props.onClose({ showModal: true });
+      onClose();
     }
   };
-  handleBackdropClick = event => {
+  /* eslint-enable */
+  const handleBackdropClick = event => {
     if (event.currentTarget === event.target) {
-      this.props.onClose();
+      onClose();
     }
   };
-  handleClose = event => {
-    if (event.code === 'Escape') {
-      this.props.onClose();
-    }
-  };
-  closeModal = () => {
-    this.setState({
-      selectedImage: null,
-    });
-  };
-  render() {
-    const { img, tags } = this.props;
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    //  в useEffect знімаємо случаха через повернення колбека з колбека
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
-    return createPortal(
-      <ModalOverlay onClick={this.handleBackdropClick}>
-        <ModalContainer>
-          <Img src={img} alt={tags} />
-        </ModalContainer>
-      </ModalOverlay>,
-      modalRoot
-    );
-  }
+  return createPortal(
+    <ModalOverlay onClick={handleBackdropClick}>
+      <ModalContainer>
+        <Img src={img} alt={tags} />
+      </ModalContainer>
+    </ModalOverlay>,
+    modalRoot
+  );
 }
 
 export default Modal;
 
 Modal.propTypes = {
+  onClose: PropTypes.func.isRequired,
   img: PropTypes.string.isRequired,
   tags: PropTypes.string.isRequired,
 };

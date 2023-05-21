@@ -3,11 +3,9 @@ import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import { GalleryList } from './ImageGallery.styled';
 import PropTypes from 'prop-types';
 function ImageGallery({ images, openModal, updateImglink }) {
-  // console.log('картинки з галереї', images);
   return (
     <GalleryList>
       {images.map(({ id, webformatURL, tags, largeImageURL }) => {
-        // console.log(webformatURL);
         return (
           <ImageGalleryItem
             key={id}
@@ -26,7 +24,12 @@ function ImageGallery({ images, openModal, updateImglink }) {
 export default ImageGallery;
 
 ImageGallery.propTypes = {
-  images: PropTypes.array.isRequired,
-  openModal: PropTypes.func.isRequired,
-  updateImglink: PropTypes.func.isRequired,
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+      tags: PropTypes.string.isRequired,
+      largeImageURL: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
